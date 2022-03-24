@@ -36,36 +36,31 @@ const signUp = async (email, password) => {
 
 }
 
-
-// module.exports = { signUp }
-
-
-const login = async (email, pw ) => {
+const login = async (email, password ) => {
     try {
         console.log('6 : ', 6)
-        const user = userDao.getUserByEmailPassword(email)
+
+        const user = await userDao.getUserByEmailPassword(email)
+
         if (user.length === 0) {
             const error = new Error("INVALID_USER")
             error.statuscode = 400
             throw error
         }
 
-
         console.log('7: ', 7)
-        const user = userDao.getUserByEmailPassword(password)
+        const isCorrect = bcrypt.compareSync(password, user[0].password)
         console.log('8: ', 8)
-        const isCorrect = bcrypt.compareSync(pw, user[0].password)
-        console.log('9: ', 9)
 
         if (!isCorrect) {
-            console.log('10: ', 10)
+            console.log('9: ', 9)
             const error = new Error('INVALID_USER')
             error.statuscode = 400
             throw error
         }
+        console.log('10: ', 10)
 
         const token = jwt.sign({ userID: user[0].id }, process.env.SECRET_KEY)
-        return res.status(200).json({ messge: 'LOGIN_SUCESS', jwt: token })
     } catch (err) {
         console.log(err)
         next(err)

@@ -1,4 +1,6 @@
 
+const jwt = require('jsonwebtoken')
+
 const userService = require('../services/userService')
 
 
@@ -47,15 +49,16 @@ const login = async (req, res, next) => {
 
     console.log('5 : ', 5)
 
-    res.status(201).json({
-      message: 'LOGIN_SUCESS',
-      user_id: user.id,
-    })
+    const token = userService.login(email, password)
+    console.log('11: ', 11)
+    return res.status(200).json({ messge: 'LOGIN_SUCESS', jwt: token })
+
   } catch (err) {
     console.log(err)
     return res.status(err.statusCode || 500).json({ message: err.message })
   }
 }
+
 
 
 module.exports = { signUp, login }
